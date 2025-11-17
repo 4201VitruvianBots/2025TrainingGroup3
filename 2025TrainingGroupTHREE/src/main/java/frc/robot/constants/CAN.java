@@ -20,4 +20,8 @@ public class CAN {
   public static final int backLeftTurnMotor = 25;
   public static final int backRightDriveMotor = 26;
   public static final int backRightTurnMotor = 27;
+
+  public static final int elevatorMotor1 = 33;
+  public static final int elevatorMotor2 = 34;
+  
 }
