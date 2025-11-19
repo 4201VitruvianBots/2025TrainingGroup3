@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.AUTOS.TwoCoralAuto;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 // // import frc.robot.commands.Autos;
@@ -13,7 +14,10 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 // import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -32,8 +36,11 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController = new CommandXboxController(0);
   
-  private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
+  private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps / 10.42; // kSpeedAt12VoltsMps desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+
+    private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
+
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -43,6 +50,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    initAutoChooser();
 
     SmartDashboard.putData(new ResetGyro(m_swerveDrive));
   }
@@ -78,7 +86,17 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  // public Command getAutonomousCommand() {
+  public Command getAutonomousCommand() {
+    return m_autoChooser.getSelected();
+
     // An example command will be run in autonomous
-  //  }
+  }
+
+
+
+   private void initAutoChooser() {
+    SmartDashboard.putData("Auto Mode", m_autoChooser);
+    m_autoChooser.setDefaultOption("Do Nothing", new WaitCommand(0));
+    m_autoChooser.addOption("TwoCoralAuto", new TwoCoralAuto(m_swerveDrive));
+  }
 }
